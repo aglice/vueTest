@@ -5,6 +5,16 @@
 ## Build Setup
 
 ``` bash
+npm install vue-cli -g
+
+vue init webpack-simple your_project
+
+cd my-project
+
+npm install webpack@^2.2.0 --save-dev 
+
+npm install babel-loader babel-core@^6.0.0  --save-dev 
+
 # install dependencies
 npm install
 
