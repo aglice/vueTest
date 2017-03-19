@@ -3,15 +3,17 @@
  */
 var tree = function () {
     function construct() {
-        this.nodePool = [];
+        var nodePool = [];
         this.rootNode = new treeNode(null);
         this.rootNode.properties.name = "0";
+        this.getNodeAt = function (index) {
+            return nodePool[index] ;
+        };
         this.addNode = function (parentNode,nodeInfo) {
             if(parentNode==null) {
                 parentNode = this.rootNode;
             }
             var len;var treenode;var i;
-            console.log( typeof nodeInfo );
             if((typeof nodeInfo)=="number") {
                 len = nodeInfo;
             }
@@ -21,21 +23,23 @@ var tree = function () {
             for ( i = 0; i < len; i++) {
                 treenode = new treeNode(parentNode,nodeInfo[i]);
                 treenode.properties.name = parentNode.properties.name +"_"+ i;
-                console.log( treenode.properties.name );
-                if(treenode.val!=undefined){ console.log(treenode.val["key"]); }
-                if (this.nodePool.indexOf(treenode) == -1) {
-                    this.nodePool.push(treenode);
+                if (nodePool.indexOf(treenode) == -1) {
+                    nodePool.push(treenode);
                     parentNode.children.push(treenode);
                 }
             }
-            console.log( this.nodePool );
-
-
+        };
+        this.resetProperties = function () {
+            var len = nodePool.length;
+            for (var i = 0; i < len; i++) {
+                nodePool[i].properties.count = 0;
+                nodePool[i].properties.mark = false;
+            }
         };
         this.resetCount = function () {
-            var len = this.nodePool.length;
+            var len = nodePool.length;
             for (var i = 0; i < len; i++) {
-                this.nodePool[i].properties.count = 0;
+                nodePool[i].properties.count = 0;
             }
         };
         this.parentTo = function (node, includeSelf, method) { //溯源父级
@@ -69,17 +73,27 @@ var tree = function () {
             }
         };
 
-        this.traversalUp = function (node, includeSelf, method) { //深度优先 向上 后序遍历
-
-
-        };
-
-        this.traversalDepFirstDown = function (node, includeSelf, method) {//深度优先 向下 前序遍历
-            console.log( "深度优先 向下 前序遍历" );
+        this.traversalDepFirstUp = function (node, includeSelf, method) { //.log( "深度优先 向上 后序遍历" );
             if (includeSelf) {
                 method(node);
             }
-            var parent, traversalArr = [], sons, num = 0, num2 = 0;
+            var parent,  sons, num = 0, num2 = 0;
+            var currentNode = node;
+            while (currentNode != null && num < 1000) {
+                num++;
+                sons = currentNode.children;
+
+            }//while 结束
+            this.resetProperties();
+        };
+
+        this.traversalDepFirstDown = function (node, includeSelf, method) {//.log( "深度优先 向下 前序遍历" );
+
+            if (includeSelf) {
+                method(node);
+            }
+            var parent,  sons, num = 0, num2 = 0;
+            // var traversalArr = [];
             var currentNode = node;
             while (currentNode != null && num < 1000) {
                 num++;
@@ -89,33 +103,38 @@ var tree = function () {
                     currentNode = sons[parent.properties.count];
                     if(currentNode.properties.mark==false) {
                         currentNode.properties.mark = true;
-                        traversalArr.push( currentNode );
+                        // traversalArr.push( currentNode );
                         method(currentNode);
                     }
 
                 }
                 else {
                     parent = currentNode.parent;
-                    while (parent != null && parent.properties.count >= parent.children.length && num2 < 1000) {
+
+                    //有父级，但是计数结束
+                    while (parent != null && parent.properties.count >= parent.children.length-1 && num2 < 1000) {
                         num2++;
-                        parent.properties.count++;
                         parent = parent.parent;
                     }
+                    if( parent==null ) { //没父级
+                        //.log( "traversalArr:",traversalArr );
+                        return;
+                    }
+                    //有父级，且计数未结束
                     parent.properties.count++;
                     if (parent.properties.count < parent.children.length) {
                         currentNode = parent.children[parent.properties.count];
                         if(currentNode.properties.mark==false) {
                             currentNode.properties.mark = true;
-                            traversalArr.push( currentNode );
+                            //traversalArr.push( currentNode );
                             method(currentNode);
                         }
                     }
                 }
-            }
-            console.log( "traversalArr:",traversalArr );
-            // traversalArr.splice( 0,traversalArr.length );
-            // traversalArr = null;
+            } //while 结束
+            this.resetProperties();
         };
+
     }
 
     return construct;
