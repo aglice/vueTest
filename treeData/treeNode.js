@@ -6,7 +6,7 @@ var treeNode = function () {
         this.parent = parent;
         this.children = [];
         this.val = val;
-        this.properties = {count:0,name:"",mark:false}; //遍历计数
+        this.properties = {count:0,name:""}; //遍历计数
     }
     return treeNode;
 }();
