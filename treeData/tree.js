@@ -35,7 +35,6 @@ var tree = function () {
             var len = nodePool.length;
             for (var i = 0; i < len; i++) {
                 nodePool[i].properties.count = 0;
-                nodePool[i].properties.mark = false;
             }
         };
         this.resetCount = function () {
@@ -114,13 +113,9 @@ var tree = function () {
                         }
                     }
                 }
-            }
-            if (parent == null) { //没父级
-                //.log( "traversalArr:",traversalArr );
-                this.resetProperties();
-                return;
-            }
+            }// while 结束
 
+            this.resetProperties();
 
         };
 
